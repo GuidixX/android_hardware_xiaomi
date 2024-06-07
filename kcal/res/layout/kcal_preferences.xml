@@ -1,0 +1,14 @@
+<!-- res/xml/kcal_preferences.xml -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <org.lineageos.settings.preferences.SecureSettingSwitchPreference
+        android:key="kcal_enabled"
+        android:title="Enable KCAL"
+        android:defaultValue="false" />
+    <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
+        android:key="color_minimum"
+        android:title="Minimum"
+        android:defaultValue="35"
+        android:min="0"
+        android:max="255" />
+    <!-- Add other preferences similarly -->
+</PreferenceScreen>
