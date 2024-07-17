@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <org.lineageos.settings.preferences.SecureSettingSwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="kcal_enabled"
         android:title="@string/kcal_disabled" 
         app:iconSpaceReserved="false"/>
 
     <org.lineageos.settings.preferences.SecureSettingSwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:dependency="kcal_enabled"
         android:key="set_on_boot"
         android:title="@string/set_on_boot"
@@ -30,7 +30,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="255"
-            android:dependency="kcal_red"
+            android:dependency="kcal_enabled"
             android:key="color_red"
             android:max="255"
             android:title="@string/color_red"
@@ -38,7 +38,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="255"
-            android:dependency="kcal_green"
+            android:dependency="kcal_enabled"
             android:key="color_green"
             android:max="255"
             android:title="@string/color_green"
@@ -46,7 +46,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="255"
-            android:dependency="kcal_blue"
+            android:dependency="kcal_enabled"
             android:key="color_blue"
             android:max="255"
             android:title="@string/color_blue"
@@ -69,7 +69,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="35"
-            android:dependency="kcal_sat"
+            android:dependency="kcal_enabled"
             android:key="saturation"
             android:max="158"
             android:title="@string/saturation"
@@ -85,7 +85,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="127"
-            android:dependency="kcal_cont"
+            android:dependency="kcal_enabled"
             android:key="contrast"
             android:max="255"
             android:title="@string/contrast"
@@ -93,7 +93,7 @@
 
         <org.lineageos.settings.preferences.SecureSettingSeekBarPreference
             android:defaultValue="0"
-            android:dependency="kcal_hue"
+            android:dependency="kcal_enabled"
             android:key="hue"
             android:max="1536"
             android:title="@string/hue" 

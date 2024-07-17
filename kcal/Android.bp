@@ -6,9 +6,6 @@
 
 android_app {
     name: "XiaomiKcal",
-    defaults: [
-        "SettingsLibDefaults",
-    ],
 
     srcs: ["src/**/*.java"],
     resource_dirs: ["res"],
@@ -24,5 +21,6 @@ android_app {
 
     optimize: {
         proguard_flags_files: ["proguard.flags"],
+        shrink_resources: true,
     },
 }
