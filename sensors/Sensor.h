@@ -41,6 +41,9 @@ namespace V2_1 {
 namespace subhal {
 namespace implementation {
 
+extern std::string GetPollPath(const char** array);
+extern bool IsFileValid(const std::string& file);
+
 class ISensorsEventCallback {
   public:
     virtual ~ISensorsEventCallback(){};
@@ -95,23 +98,18 @@ class OneShotSensor : public Sensor {
 class SysfsPollingOneShotSensor : public OneShotSensor {
   public:
     SysfsPollingOneShotSensor(int32_t sensorHandle, ISensorsEventCallback* callback,
-                              const std::string& pollPath, const std::string& enablePath,
-                              const std::string& name, const std::string& typeAsString,
-                              SensorType type);
+                              const std::string& pollPath, const std::string& name,
+                              const std::string& typeAsString, SensorType type);
     virtual ~SysfsPollingOneShotSensor() override;
 
     virtual void activate(bool enable) override;
     virtual void activate(bool enable, bool notify, bool lock);
-    virtual void writeEnable(bool enable);
     virtual void setOperationMode(OperationMode mode) override;
     virtual std::vector<Event> readEvents() override;
     virtual void fillEventData(Event& event);
-    virtual bool readFd(const int fd);
 
   protected:
     virtual void run() override;
-
-    std::ofstream mEnableStream;
 
   private:
     void interruptPoll();
@@ -121,44 +119,58 @@ class SysfsPollingOneShotSensor : public OneShotSensor {
     int mPollFd;
 };
 
+#ifdef USES_UDFPS_SENSOR
+static const char* udfpsStatePaths[] = {
+  "/sys/devices/virtual/touch/touch_dev/fod_press_status",
+  "/sys/touchpanel/fp_state",
+  NULL
+};
+
 class UdfpsSensor : public SysfsPollingOneShotSensor {
   public:
     UdfpsSensor(int32_t sensorHandle, ISensorsEventCallback* callback)
         : SysfsPollingOneShotSensor(
-                  sensorHandle, callback, "/sys/class/touch/touch_dev/fod_press_status",
-                  "/sys/class/touch/touch_dev/fod_longpress_gesture_enabled", "UDFPS Sensor",
-                  "org.lineageos.sensor.udfps",
-                  static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) +
-                                          1)) {}
-    virtual void fillEventData(Event& event);
-    virtual bool readFd(const int fd);
-
-  private:
-    int mScreenX;
-    int mScreenY;
+              sensorHandle, callback, GetPollPath(udfpsStatePaths),
+              "UDFPS Sensor", "co.aospa.sensor.udfps",
+              static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) + 2)) {}
 };
+#endif
 
-class SingleTapSensor : public SysfsPollingOneShotSensor {
-  public:
-    SingleTapSensor(int32_t sensorHandle, ISensorsEventCallback* callback)
-        : SysfsPollingOneShotSensor(
-                  sensorHandle, callback, "/sys/class/touch/touch_dev/gesture_single_tap_state",
-                  "/sys/class/touch/touch_dev/gesture_single_tap_enabled", "Single Tap Sensor",
-                  "org.lineageos.sensor.single_tap",
-                  static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) +
-                                          2)) {}
+#ifdef USES_DOUBLE_TAP_SENSOR
+static const char* doubleTapPaths[] = {
+  "/sys/class/touch/touch_dev/gesture_double_tap_state",
+  "/sys/devices/platform/soc/884000.i2c/i2c-1/1-0038/double_tap_pressed",
+  "/sys/devices/platform/soc/4a88000.i2c/i2c-1/1-0038/double_tap_pressed",
+  NULL
 };
 
 class DoubleTapSensor : public SysfsPollingOneShotSensor {
   public:
     DoubleTapSensor(int32_t sensorHandle, ISensorsEventCallback* callback)
         : SysfsPollingOneShotSensor(
-                  sensorHandle, callback, "/sys/class/touch/touch_dev/gesture_double_tap_state",
-                  "/sys/class/touch/touch_dev/gesture_double_tap_enabled", "Double Tap Sensor",
-                  "org.lineageos.sensor.double_tap",
-                  static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) +
-                                          3)) {}
+              sensorHandle, callback, GetPollPath(doubleTapPaths),
+              "Double Tap Sensor", "co.aospa.sensor.double_tap",
+              static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) + 1)) {}
 };
+#endif
+
+#ifdef USES_SINGLE_TAP_SENSOR
+static const char* singleTapPaths[] = {
+  "/sys/class/touch/touch_dev/gesture_single_tap_state",
+  "/sys/devices/platform/soc/884000.i2c/i2c-1/1-0038/single_tap_pressed",
+  "/sys/devices/platform/soc/4a88000.i2c/i2c-1/1-0038/single_tap_pressed",
+  NULL
+};
+
+class SingleTapSensor : public SysfsPollingOneShotSensor {
+  public:
+    SingleTapSensor(int32_t sensorHandle, ISensorsEventCallback* callback)
+        : SysfsPollingOneShotSensor(
+              sensorHandle, callback, GetPollPath(singleTapPaths),
+              "Single Tap Sensor", "co.aospa.sensor.single_tap",
+              static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) + 1)) {}
+};
+#endif
 
 }  // namespace implementation
 }  // namespace subhal
